@@ -5,11 +5,12 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 x = 500
 y = 500
-xvel = 2
-yvel = 3
-ballsize = 10
-start = 1
-end = 1
+xvel = 4
+yvel = 6
+ballsize = 40
+start = (50,50)
+current_pos = (50,50)
+end = 2
 line_draw = False
 #game display
 pygame.init()
@@ -27,17 +28,27 @@ def draw_walls():
 #game run
 rungame = True
 while rungame:
+    screen.fill(BLACK)
+    draw_walls()
+    if line_draw is True:
+        current_pos = pygame.mouse.get_pos()
+        pygame.draw.line(screen,WHITE, start, current_pos,6)  # Draw the line dynamically
+        pygame.display.update()
+        print("Current position:", current_pos)  # Print the current mouse position
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             rungame = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN:
             if pygame.mouse.get_pressed()[0]:
                 start = pygame.mouse.get_pos()
                 line_draw = True
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if pygame.mouse.get_pressed()[0]:
-                end = pygame.mouse.get_pos()
-                line_draw = False
+                print("Start",start)
+         # Handle mouse button up (end drawing)
+        if event.type == pygame.MOUSEBUTTONUP:
+            end = pygame.mouse.get_pos()
+            line_draw = False
+            print("End:", end)
+            
         
     #check if ball needs to bounce:
     if x >= 950-ballsize or x <= 50: #if ball is at left or right wall
@@ -49,10 +60,6 @@ while rungame:
 
 
             #pygame.draw.line(screen, WHITE, (start), (end),8)
-    print(start)
-    print(end)
-    screen.fill(BLACK)
-    draw_walls()
     pygame.draw.ellipse(screen,WHITE,[x,y,ballsize,ballsize],0)
     x += xvel #make x go up by xvel
     y += yvel #make y go up by yvel
