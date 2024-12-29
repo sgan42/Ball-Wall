@@ -1,4 +1,5 @@
 import pygame
+import math
 
 clock = pygame.time.Clock()
 WHITE = (255,255,255)
@@ -48,7 +49,12 @@ while rungame:
             end = pygame.mouse.get_pos()
             line_draw = False
             print("End:", end)
-            
+            (x, y) = start
+            direction = (end[0] - start[0], end[1] - start[1])
+            magnitude = math.sqrt(direction[0] ** 2 + direction[1] ** 2)
+            if magnitude != 0:
+                xvel = (direction[0] / magnitude) * 10  # Speed can be adjusted
+                yvel = (direction[1] / magnitude) * 10
         
     #check if ball needs to bounce:
     if x >= 950-ballsize or x <= 50: #if ball is at left or right wall
@@ -58,10 +64,9 @@ while rungame:
     clock.tick(60)
     
 
-
-            #pygame.draw.line(screen, WHITE, (start), (end),8)
-    pygame.draw.ellipse(screen,WHITE,[x,y,ballsize,ballsize],0)
-    x += xvel #make x go up by xvel
-    y += yvel #make y go up by yvel
-    pygame.display.update()
+    if line_draw == False:
+        pygame.draw.ellipse(screen,WHITE,[x,y,ballsize,ballsize],0)
+        x += xvel #make x go up by xvel
+        y += yvel #make y go up by yvel
+        pygame.display.update()
 pygame.quit()
