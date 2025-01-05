@@ -15,9 +15,8 @@ current_pos = (50,50)
 end = 2
 line_draw = False
 speed = 20
-slow_rate = 1.7
-frame_timer = 1
-frame_cap = False
+slow_rate =1
+ignore = 0
 #game display
 pygame.init()
 screen = pygame.display.set_mode((1000,1000))
@@ -36,13 +35,6 @@ rungame = True
 while rungame:
     screen.fill(BLACK)
     draw_walls()
-    frame_timer += 1 
-    if len(stack) > 0 and stack[-1] == frame_timer: 
-        frame_cap = True
-        print("!!!!")
-    else:
-        frame_cap = False
-    stack.append(frame_timer)
     if line_draw is True:
         current_pos = pygame.mouse.get_pos()
         pygame.draw.line(screen,WHITE, start, current_pos,6)  # Draw the line dynamically
@@ -67,28 +59,33 @@ while rungame:
             if magnitude != 0:
                 xvel = (direction[0] / magnitude) * speed
                 yvel = (direction[1] / magnitude) * speed
-        
+
+    #logic for bounce check
+    if ignore>0:
+         ignore = ignore-1
+         print(ignore)
+    else:
     #check if ball needs to bounce:
-    if x >= 950-ballsize or x <= 50: #if ball is at left or right wall
-        if frame_cap ==False:
-            frame_timer = 1
-            if xvel <= 7:
-                xvel = -xvel   #change direction
-            else:
-                xvel = -xvel/slow_rate
-            frame_cap = False
-    if y >= 950-ballsize or y <= 50:
-        if frame_cap == False:
-            frame_timer = 1
-            if yvel <= 7:
-                yvel = -yvel   #change direction
-            else:
-                yvel = -yvel/slow_rate
+        if x >= 950-ballsize or x <= 50: #if ball is at left or right wall
+                ignore= 3
+                if xvel <=0.01:
+                     xvel = -xvel
+                else:
+                    xvel = -xvel/slow_rate
+        if y >= 950-ballsize or y <= 50:
+                ignore = 3
+                if yvel <=0.01:
+                     yvel = -yvel
+                else:
+                    yvel = -yvel/slow_rate
     clock.tick(60)
 
     if line_draw == False:
         pygame.draw.ellipse(screen,WHITE,[x,y,ballsize,ballsize],0)
-        x += xvel #make x go up by xvel
-        y += yvel #make y go up by yvel
+        x += xvel
+        xvel = xvel/1.005
+        y += yvel
+        yvel= yvel/1.005
+
         pygame.display.update()
 pygame.quit()
