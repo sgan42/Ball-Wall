@@ -1,4 +1,3 @@
-
 import pygame
 import math
 
@@ -37,10 +36,13 @@ rungame = True
 while rungame:
     screen.fill(BLACK)
     draw_walls()
-    frame_timer = frame_timer + 1
+    frame_timer += 1 
+    if len(stack) > 0 and stack[-1] == frame_timer: 
+        frame_cap = True
+        print("!!!!")
+    else:
+        frame_cap = False
     stack.append(frame_timer)
-    print(stack)
-    stack.pop(4)
     if line_draw is True:
         current_pos = pygame.mouse.get_pos()
         pygame.draw.line(screen,WHITE, start, current_pos,6)  # Draw the line dynamically
@@ -68,17 +70,20 @@ while rungame:
         
     #check if ball needs to bounce:
     if x >= 950-ballsize or x <= 50: #if ball is at left or right wall
-        frame_timer = 1
-        if xvel <= 7:
-            xvel = -xvel   #change direction
-        else:
-            xvel = -xvel/slow_rate
-    if y >= 950-ballsize or y <= 50: #if ball is at top or bottom:
-        frame_timer = 1
-        if yvel <= 7:
-            yvel = -yvel   #change direction
-        else:
-            yvel = -yvel/slow_rate
+        if frame_cap ==False:
+            frame_timer = 1
+            if xvel <= 7:
+                xvel = -xvel   #change direction
+            else:
+                xvel = -xvel/slow_rate
+            frame_cap = False
+    if y >= 950-ballsize or y <= 50:
+        if frame_cap == False:
+            frame_timer = 1
+            if yvel <= 7:
+                yvel = -yvel   #change direction
+            else:
+                yvel = -yvel/slow_rate
     clock.tick(60)
 
     if line_draw == False:
