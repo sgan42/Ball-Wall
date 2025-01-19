@@ -21,7 +21,6 @@ end = 2
 line_draw = False
 speed = 35
 slow_rate =1.7
-ignore = 0
 #game display
 pygame.init()
 screen = pygame.display.set_mode((1000,1000))
@@ -40,18 +39,8 @@ rungame = True
 while rungame:
     screen.fill(BLACK)
     draw_walls()
-    constant_pos = pygame.mouse.get_pos()
-    (b,l) = constant_pos
-    if b >= 950 or b <= 50 or l >= 950 or l <= 50:
-        pass
-    else:
-        pos = True
     if line_draw is True:
-        if pos == True:
-            current_pos = pygame.mouse.get_pos()
-            (b,l) = current_pos
-            if b >= 950 or b <= 50 or l >= 950 or l <= 50:
-                pos = False
+        current_pos = pygame.mouse.get_pos()
         pygame.draw.line(screen,WHITE, start, current_pos,6)  # Draw the line dynamically
         pygame.display.update()
         print("Current position:", current_pos)  # Print the current mouse position
@@ -63,8 +52,8 @@ while rungame:
                 start = pygame.mouse.get_pos()
                 STOP = False
                 pos = True
-                (z,r) = start
-                if z >= 950 or z <= 50 or r >= 950 or r <= 50:
+                (x,y) = start
+                if x >= 950 or x <= 50 or y >= 950 or y <= 50:
                     line_draw = False
                     STOP = True
                 else:
@@ -73,6 +62,11 @@ while rungame:
          # Handle mouse button up (end drawing)
         if event.type == pygame.MOUSEBUTTONUP:
             if STOP == False:
+                # (b,l) = current_pos
+                # if b > 950:
+                #     end = (950,l)
+                # if l > 950:
+                #     end = (b,950)
                 end = pygame.mouse.get_pos()
                 line_draw = False
                 print("End:", end)
@@ -83,31 +77,28 @@ while rungame:
                     xvel = (direction[0] / magnitude) * speed
                     yvel = (direction[1] / magnitude) * speed
 
-    #logic for bounce check
-    if ignore>0:
-         ignore = ignore-1
-         print(ignore)
-    else:
-    #check if ball needs to bounce:
-        if x >= 953-ballsize or x <= 47: #if ball is at left or right wall
-                ignore= 3
-                if xvel <=0.01:
-                     xvel = -xvel
-                else:
-                    xvel = -xvel/slow_rate
-        if y >= 953-ballsize or y <= 47:
-                ignore = 3
-                if yvel <=0.01:
-                     yvel = -yvel
-                else:
-                    yvel = -yvel/slow_rate
+    # Bounce logic:
+    if x + ballsize > 950:
+        x = 950 - ballsize
+        xvel = -xvel / slow_rate
+    elif x < 50:
+        x = 50 
+        xvel = -xvel / slow_rate
+
+    if y + ballsize > 950:
+        y = 950 - ballsize
+        yvel = -yvel / slow_rate
+    elif y < 50:
+        y = 50
+        yvel = -yvel / slow_rate
     clock.tick(60)
 
     if line_draw == False:
         pygame.draw.ellipse(screen,WHITE,[x,y,ballsize,ballsize],0)
         x += xvel
-        xvel = xvel/1.007
         y += yvel
+
+        xvel = xvel/1.007
         yvel= yvel/1.007
 
         pygame.display.update()
